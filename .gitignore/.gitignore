@@ -1,0 +1,35 @@
+// bvp.m
+
+function [ xout, yout ] = bvp(F,A,B,n,q)
+% Numerical solving of Boundary Value Problem (BVP) 
+% with Dirichle boundary conditions    
+%     (1) u''=-F(x)
+%     (2) u(A)=0,u(B)=0;
+% n-number of gridpoints =>n-1 number of intervals
+% A and B - boundaries of the interval
+% -F(x)- right-hand side of the differential equation (1)
+mu=5-2*exp(1);
+F=inline(F,'x');
+q=inline(q,'x');
+h=(B-A)/(n-1);
+xout=A:h:B;
+a = zeros(n,1);
+b = zeros(n,1);
+c = zeros(n,1);
+c(1)=1;
+b(1)=0;
+f(1)=-2;
+for i=2:n-1
+a(i)=1;
+c(i)=2+h*h*feval(q,xout(i));
+b(i)=1;
+f(i)=-h*h*feval(F,xout(i));
+end 
+a(n)=1;
+c(n)=1+((h*h)/2)*feval(q,xout(n));
+f(n)=-(mu)*h-((h*h)/2)*feval(F,xout(n));
+yout=tridiag(a,b,c,f);
+end
+
+//matlab
+n=101;
